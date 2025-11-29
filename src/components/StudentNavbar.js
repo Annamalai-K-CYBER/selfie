@@ -1,11 +1,26 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode"; // ✅ correct named import
 
 export default function StudentNavbar() {
   const [open, setOpen] = useState(false);
+  const [name, setName] = useState("Student");
   const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token); // decode token
+        if (decoded?.name) setName(decoded.name);
+      } catch (err) {
+        console.error("Invalid token", err);
+      }
+    }
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -15,7 +30,7 @@ export default function StudentNavbar() {
 
   return (
     <nav className="bg-yellow-400 shadow-md p-4 flex justify-between items-center sticky top-0 z-50">
-      <h1 className="text-xl font-bold text-white">Student Dashboard</h1>
+      <h1 className="text-xl font-bold text-white">{name}'s Dashboard</h1>
 
       <button className="md:hidden text-2xl text-white" onClick={() => setOpen(!open)}>
         ☰

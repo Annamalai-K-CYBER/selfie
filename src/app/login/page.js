@@ -16,12 +16,9 @@ export default function LoginPage() {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
-    // If token + role → redirect
     if (token && role) {
       router.push("/dashboard");
     }
-
-    // Release page rendering
     setCheckingAuth(false);
   }, [router]);
 
@@ -46,12 +43,13 @@ export default function LoginPage() {
       }
 
       if (data?.token) {
+        // Store token, role, and student name
         localStorage.setItem("token", data.token);
-
+        localStorage.setItem("userName", data.user?.name || "Student");
         if (data?.user?.role) {
           localStorage.setItem("role", data.user.role);
         } else {
-          localStorage.removeItem("role"); // ✨ avoid redirect loop
+          localStorage.removeItem("role");
         }
 
         router.push("/dashboard");
